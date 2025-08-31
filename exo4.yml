@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: TD OAS - Exo 4 - Products Search
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+components:
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      required: false
+      schema: { type: integer, minimum: 1, maximum: 100 }
+      example: 10
+      description: Nombre maximum d'éléments.
+    QParam:
+      name: q
+      in: query
+      required: false
+      schema: { type: string }
+      example: coffee
+      description: Terme de recherche.
+  schemas:
+    Product:
+      type: object
+      required: [name, expiration_datetime, price]
+      properties:
+        name: { type: string, example: Arabica Coffee Beans }
+        expiration_datetime: { type: string, format: date-time, example: '2025-12-31T23:59:59Z' }
+        price: { type: number, format: float, example: 12.5 }
+paths:
+  /products:
+    get:
+      tags: [Products]
+      summary: Rechercher des produits
+      parameters:
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/QParam'
+      responses:
+        '200':
+          description: Liste de produits
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Product' }
+              examples:
+                manyProducts:
+                  summary: Résultat avec plusieurs produits
+                  value:
+                    - name: Arabica Coffee Beans
+                      expiration_datetime: '2025-12-31T23:59:59Z'
+                      price: 12.5
+                    - name: Green Tea
+                      expiration_datetime: '2026-03-15T10:00:00Z'
+                      price: 7.99
+                emptyList:
+                  summary: Résultat vide
+                  value: []
